@@ -17,10 +17,10 @@ namespace Chiron_Unpacker
         private static readonly AssemblyLoadEventHandler s_EventHandler =
           new AssemblyLoadEventHandler(OnAssemblyLoad);
 
+        // The application may be running Environment.Exit(). 
+        // So we need to handle the ProcessExit event.
         private static readonly EventHandler exit_EventHandler =
             new EventHandler(OnProcessExit);
-
-
 
         static void Main(string[] args)
         {
@@ -52,11 +52,14 @@ namespace Chiron_Unpacker
             // details: https://learn.microsoft.com/en-us/dotnet/api/system.appdomain?view=net-8.0
             AppDomain specialDomain = AppDomain.CreateDomain("Chiron");
             specialDomain.SetData("resultDir", resultDir);
+            // If it loads any executable file into memory, we will handle and save it.
             specialDomain.AssemblyLoad += OnAssemblyLoad;
+            // Callback function used to start deobfuscation processes just before process shutdown
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 
             try
             {
+                // We run the application we want to unpack in the controlled environment.
                 specialDomain.ExecuteAssembly(inputFile);
             }
             catch (Exception ex)
@@ -70,7 +73,6 @@ namespace Chiron_Unpacker
             string[] dumpedFiles = Directory.GetFiles(resultDir);
             foreach(string file in dumpedFiles)
             {
-                Console.WriteLine(file);
                 ResourceUnpacker deobfuscator = new ResourceUnpacker(file, resultDir);
                 if (!deobfuscator.CheckFile())
                     continue;

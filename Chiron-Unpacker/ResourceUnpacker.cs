@@ -35,12 +35,11 @@ namespace Chiron_Unpacker
         public void Unpack()
         {
             /*
-             *  49	00B5	nop
-                50	00B6	nop
-                51	00B7	ldsfld	string ...::RESOURCE_NAME
-                52	00BC	call	uint8[] ...::GetResourceObject(string)
-                53	00C1	ldsfld	string ...::DECRYPTION_KEY
-                54	00C6	call	uint8[] ...::RC4_FUNCTION(uint8[], string)
+             *
+                51	ldsfld	string ...::RESOURCE_NAME
+                52	call	uint8[] ...::GetResourceObject(string)
+                53	ldsfld	string ...::DECRYPTION_KEY
+                54	call	uint8[] ...::RC4_FUNCTION(uint8[], string)
              * 
              */
 
@@ -89,13 +88,18 @@ namespace Chiron_Unpacker
                 }
             }
 
+            // We delete the first 4 bytes to delete the resource type and size.
             byte[] newArray = new byte[resourceData.Length - 4];
             Array.Copy(resourceData, 4, newArray, 0, newArray.Length);
 
             byte[] decryptedResource = RC4Decrypt(newArray, rc4Key);
             System.IO.File.WriteAllBytes(Path.Combine(Result, $"{resourceName}.bin"), decryptedResource);
+            Console.WriteLine("[+] Successfully saved decrypted resource file!");
         }
 
+        /// <summary>
+        /// Method <c>RC4Decrypt</c> decrypts RC4 with desired key.
+        /// </summary>
         public static byte[] RC4Decrypt(byte[] resource, string rc4Key)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(rc4Key);
@@ -109,6 +113,9 @@ namespace Chiron_Unpacker
             return resource;
         }
 
+        /// <summary>
+        /// Method <c>DynamicStringDecrypter</c> decrypts generic string method.
+        /// </summary>
         public string DynamicStringDecrypter(MethodSpec method, uint decryptKey)
         {
             try
@@ -123,14 +130,18 @@ namespace Chiron_Unpacker
             }
         }
 
-
+        /// <summary>
+        /// Method <c>GetFieldValue</c> finds where a field is defined and returns the value
+        /// </summary>
         public string GetFieldValue(FieldDef field, MethodDef cctor)
         {
+            // pattern
             /*
-             * 132	023A	ldc.i4	0x7B1DF5C5
-                133	023F	call	DECRYPT_METHOD
-                134	0244	stsfld	string LQTMDMee8GPq3vc7go.kDdORR4d0BYgXElVp6::JVEV1aGXTs
-             */
+                132	ldc.i4	0x7B1DF5C5  STRING_DECRYPT_KEY
+                133	call	DECRYPT_METHOD
+                134	stsfld	string LQTMDMee8GPq3vc7go.kDdORR4d0BYgXElVp6::JVEV1aGXTs
+            */
+
             IList<Instruction> instructions = cctor.Body.Instructions;
             for (int i = 0; i < instructions.Count; i++)
             {
@@ -150,12 +161,12 @@ namespace Chiron_Unpacker
         {
             // pattern:
             /* 
-             * 37  0046    sub
-             * 38  0047    ldc.i4  0x100
-             * 39  004C    add
-             * 40  004D    ldc.i4  0x100
-             * 41  0052    rem
-             * 42  0053    call ...
+                37  sub
+                38  ldc.i4  0x100
+                39  add
+                40  ldc.i4  0x100
+                41  rem
+                42  call ...
              */
 
             foreach (TypeDef type in module.Types)
@@ -195,6 +206,9 @@ namespace Chiron_Unpacker
             return false;
         }
 
+        /// <summary>
+        /// Method <c>FindXref</c> finds the reference where a desired method is used.
+        /// </summary>
         public (MethodDef, int) FindXref(MethodDef method)
         {
             string functionName = method.Name;
@@ -248,7 +262,9 @@ namespace Chiron_Unpacker
 
             try
             {
+                // Load with dnlib
                 module = ModuleDefMD.Load(File);
+                // Load with Reflection (for string decryption)
                 assembly = Assembly.LoadFrom(File);
             }
             catch (Exception ex)
@@ -258,9 +274,12 @@ namespace Chiron_Unpacker
                 return false;
             }
 
+            // The last DLL file that Sample runs runs by RC4 Decrypting a resource in it. 
+            // Therefore, a file that does not contain a Resource is not our target.
             if (!module.HasResources)
                 return false;
 
+            // Find RC4 decryption pattern
             if (FindDecryptionMethod())
             {
                 Console.WriteLine($"Found RC4 Decryption Method {rc4Function.MDToken.ToString()}");
