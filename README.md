@@ -44,6 +44,11 @@ It saves executable .NET applications loaded into memory by opening a special Ap
 
 ![Unpacker Scheme](images/unpacker.png)
 
+## Unpacking Example
+
+![Unpacker Video](images/ChironUnpacker.gif)
+
+
 ## Third Party Libraries
 
 | Library                                                         | License |
