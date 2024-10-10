@@ -42,16 +42,18 @@ Chiron-Unpacker.exe -f sample.exe -o .\output_folder\ -r
 
 It saves executable .NET applications loaded into memory by opening a special AppDomain where `Assembly.Load` events are controlled. When it is run on the packed application sample using the ResourceUnpack feature, the following operations are performed respectively:
 
-1. Creates a custom AppDomain that controls Assembly.Load events.
+1. Creates a custom AppDomain that controls Assembly Load events.
 2. Controls ProcessExit events in the main AppDomain (at this stage, if the ResourceUnpack feature is activated, the next stage is started).
 3. Execute the given file inside the created custom AppDomain.
-4. Saves all .NET assemblies loaded into memory in the custom appdomain.
+4. Saves all .NET assemblies loaded into memory in the custom AppDomain.
 
 ![Unpacker Scheme](images/unpacker.png)
 
 ## Example of How It Works
 
 For example, in the video below you can see a sample of an **OriginLogger** protected with **Cassandra Protector**.
+
+This protection repeatedly loads modules into memory to unpack the protected application. Chiron saves all assembly modules loaded into memory and completely unpacks them using the Resource Unpack feature (exclusive to Cassandra Protector).
 
 ![Unpacker Video](images/ChironUnpacker.gif)
 
