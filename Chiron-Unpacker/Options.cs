@@ -10,7 +10,7 @@ namespace Chiron_Unpacker
         [Option('o', "output", Required = true, HelpText = "Select the location to save the dumped files")]
         public string Output { get; set; }
 
-        [Option('d', "deobfuscate", Required = false, Default = false, HelpText = "Just use the dump feature")]
-        public bool Deobfuscate { get; set; }
+        [Option('r', "resource", Required = false, Default = false, HelpText = "Use ResourceUnpack feature")]
+        public bool Resource { get; set; }
     }
 }

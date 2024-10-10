@@ -11,7 +11,7 @@ namespace Chiron_Unpacker
     {
         public static string inputFile = "";
         public static string resultDir = "";
-        public static bool deobfuscateMode = false;
+        public static bool resourceUnpackMode = false;
 
         // The variable we will use when handling Assembly.Load events
         private static readonly AssemblyLoadEventHandler s_EventHandler =
@@ -45,7 +45,7 @@ namespace Chiron_Unpacker
                     Console.WriteLine("Result folder created");
 
                     inputFile = o.File;
-                    deobfuscateMode = o.Deobfuscate;
+                    resourceUnpackMode = o.Resource;
                 });
 
             // We create a new AppDomain where we can control the AssemblyLoad events.
@@ -68,16 +68,16 @@ namespace Chiron_Unpacker
             }
         }
 
-        public static void Deobfuscate()
+        public static void ResourceUnpack()
         {
             string[] dumpedFiles = Directory.GetFiles(resultDir);
-            foreach(string file in dumpedFiles)
+            foreach (string file in dumpedFiles)
             {
-                ResourceUnpacker deobfuscator = new ResourceUnpacker(file, resultDir);
-                if (!deobfuscator.CheckFile())
+                ResourceUnpacker resourceUnpacker = new ResourceUnpacker(file, resultDir);
+                if (!resourceUnpacker.CheckFile())
                     continue;
 
-                deobfuscator.Unpack();
+                resourceUnpacker.Unpack();
                 return;
             }
         }
@@ -112,10 +112,10 @@ namespace Chiron_Unpacker
         public static void OnProcessExit(object Sender, object Args)
         {
             Console.WriteLine("Exiting...");
-            if (deobfuscateMode)
+            if (resourceUnpackMode)
             {
-                Console.WriteLine("Deobfuscating...");
-                Deobfuscate();
+                Console.WriteLine("Resource Unpacking...");
+                ResourceUnpack();
             }
         }
         public static void OnAssemblyLoad(object Sender, AssemblyLoadEventArgs Args)
