@@ -14,7 +14,7 @@ However, we have made the stage related to Cassandra Protector optional. If you 
 
 ## Usage
 
-[Latest Release]()
+[Latest Release](https://github.com/Malwation/Chiron-Unpacker/releases)
 
 ```
 Chiron Unpacker by Malwation
