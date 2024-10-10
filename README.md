@@ -8,6 +8,10 @@
 
 **Chiron Unpacker** is an Unpacker for Packers that uses the `Assembly.Load(byte[] rawAssembly)` function. Chiron Unpacker creates a special AppDomain and handles the Assembly.Load calls in this AppDomain. This allows us to handle all executable .NET applications loaded into memory after they are loaded.
 
+This project was developed by the Malwation Threat Research team to completely unpack the **Cassandra Protector**. Since this protection includes **ConfuserEx Constant Encryption** operations, it can also decrypt ConfuserEx constants at runtime if necessary.
+
+However, we have made the stage related to Cassandra Protector optional. If you have encountered a packer that uses the `Assembly.Load(byte[] rawAssembly)` function, you can save each module loaded into memory in the directory of your choice without using this feature.
+
 ## Usage
 
 [Latest Release]()
