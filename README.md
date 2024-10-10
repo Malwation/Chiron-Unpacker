@@ -44,11 +44,14 @@ It saves executable .NET applications loaded into memory by opening a special Ap
 
 1. Creates a custom AppDomain that controls Assembly.Load events.
 2. Controls ProcessExit events in the main AppDomain (at this stage, if the ResourceUnpack feature is activated, the next stage is started).
-3. Runs the given file inside the created custom AppDomain.
+3. Execute the given file inside the created custom AppDomain.
+4. Saves all .NET assemblies loaded into memory in the custom appdomain.
 
 ![Unpacker Scheme](images/unpacker.png)
 
-## Unpacking Example
+## Example of How It Works
+
+For example, in the video below you can see a sample of an **OriginLogger** protected with **Cassandra Protector**.
 
 ![Unpacker Video](images/ChironUnpacker.gif)
 
