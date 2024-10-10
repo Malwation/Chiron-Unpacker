@@ -6,6 +6,8 @@
 
 ## About
 
+This project was made public after the presentation “Origins of a Logger - Agent Tesla” at [VB2024](https://www.virusbulletin.com/conference/vb2024/abstracts/origins-logger-agent-tesla/).
+
 **Chiron Unpacker** is an Unpacker for Packers that uses the `Assembly.Load(byte[] rawAssembly)` function. Chiron Unpacker creates a special AppDomain and handles the Assembly.Load calls in this AppDomain. This allows us to handle all executable .NET applications loaded into memory after they are loaded.
 
 This project was developed by the Malwation Threat Research team to completely unpack the **Cassandra Protector**. Since this protection includes **ConfuserEx Constant Encryption** operations, it can also decrypt ConfuserEx constants at runtime if necessary.
@@ -49,7 +51,7 @@ It saves executable .NET applications loaded into memory by opening a special Ap
 
 ![Unpacker Scheme](images/unpacker.png)
 
-## Example of How It Works
+## Demo
 
 For example, in the video below you can see a sample of an **OriginLogger** protected with **Cassandra Protector**.
 
